@@ -9,22 +9,31 @@ import (
 )
 
 func TestYamlTemplate(t *testing.T) {
-	type io struct {
-		EnvVars  map[string]string
-		Template string
-		Output   string
+	type test struct {
+		EnvVars     map[string]string
+		Template    string
+		Output      string
+		ShouldError bool
 	}
 
-	tests := []io{
-		io{
-			EnvVars:  map[string]string{"ENVY_TEST_VALUE1": "Darkness, my old friend."},
-			Template: "Hello {{ .ENVY_TEST_VALUE1 }}",
-			Output:   "Hello Darkness, my old friend.",
+	tests := []test{
+		test{
+			EnvVars:     map[string]string{"ENVY_TEST_VALUE1": "Darkness, my old friend."},
+			Template:    "Hello {{ .ENVY_TEST_VALUE1 }}",
+			Output:      "Hello Darkness, my old friend.",
+			ShouldError: false,
 		},
-		io{
-			EnvVars:  map[string]string{"ENVY_TEST_VALUE2": "que no"},
-			Template: "Por {{ .ENVY_TEST_VALUE2 }}?",
-			Output:   "Por que no?",
+		test{
+			EnvVars:     map[string]string{"ENVY_TEST_VALUE2": "que no"},
+			Template:    "Por {{ .ENVY_TEST_VALUE2 }}?",
+			Output:      "Por que no?",
+			ShouldError: false,
+		},
+		test{
+			EnvVars:     map[string]string{},
+			Template:    "Hello {{ .NON_EXISTANT }}?",
+			Output:      "",
+			ShouldError: true,
 		},
 	}
 
@@ -53,11 +62,16 @@ func TestYamlTemplate(t *testing.T) {
 		force := true
 
 		err = TemplateFile(&sourceName, &destName, &force)
-		assert.Nil(t, err)
 
-		result, err := ioutil.ReadFile(destName)
-		assert.Nil(t, err)
+		if test.ShouldError {
+			assert.Error(t, err)
+		} else {
+			assert.Nil(t, err)
 
-		assert.Equal(t, test.Output, string(result))
+			result, err := ioutil.ReadFile(destName)
+			assert.Nil(t, err)
+
+			assert.Equal(t, test.Output, string(result))
+		}
 	}
 }

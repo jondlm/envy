@@ -30,13 +30,6 @@ func main() {
 	app.Run(os.Args)
 }
 
-func check(e error, message string) {
-	if e != nil {
-		fmt.Println(message)
-		os.Exit(1)
-	}
-}
-
 // TemplateFile takes a go template file at `sourcePath` and writes the result
 // to `destinationPath`
 func TemplateFile(sourcePath *string, destinationPath *string, force *bool) error {
