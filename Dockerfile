@@ -5,9 +5,7 @@ RUN go get github.com/golang/dep/cmd/dep
 
 WORKDIR /go/src/envy
 
-COPY envy.go envy.go
-COPY Gopkg.lock Gopkg.lock
-COPY Gopkg.toml Gopkg.toml
+COPY . .
 
 RUN dep ensure
 RUN go build
