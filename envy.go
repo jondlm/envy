@@ -12,6 +12,7 @@ import (
 func main() {
 	app := cli.App("envy", "template a single SRC go template file, using environment variables, to DST")
 	app.Spec = "[-f] SRC DST"
+	app.Version("v version", "0.0.0")
 
 	var (
 		sourcePath      = app.StringArg("SRC", "", "Source path of your go template file")
